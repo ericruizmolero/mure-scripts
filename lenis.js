@@ -4,7 +4,7 @@ document.addEventListener("DOMContentLoaded", () => {
     smooth: true,
     easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
   });
-
+  
   // Exponer lenis globalmente
   window.lenis = lenis;
 
@@ -47,7 +47,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
   sections.forEach((section) => observer.observe(section));
 
-  document.querySelectorAll('a[href^="#"]').forEach((anchor) => {
+  // Excluir anchors con nav="out" de este handler
+  document.querySelectorAll('a[href^="#"]:not([nav="out"])').forEach((anchor) => {
     anchor.addEventListener("click", (e) => {
       e.preventDefault();
       const targetId = anchor.getAttribute("href").substring(1);
