@@ -1,6 +1,6 @@
 document.addEventListener('DOMContentLoaded', function () {
   const solutionSwiper = new Swiper('.swiper.is-work', {
-    slidesPerView: 'auto',
+    slidesPerView: '1',
     speed: 1000,         
     spaceBetween: 0,
     grabCursor: true,
