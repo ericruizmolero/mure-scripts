@@ -5,6 +5,9 @@ Webflow.push(function() {
   let menuOpen = false;
   let isNavOutClick = false;
   
+  // Detectar si es mobile/tablet (Lenis desactivado)
+  const isMobileOrTablet = window.innerWidth < 992;
+  
   function toggleBodyScroll(freeze) {
     if (freeze) {
       body.classList.add('no-scroll');
@@ -30,11 +33,13 @@ Webflow.push(function() {
     toggleBodyScroll(menuOpen);
     
     if (menuOpen) {
-      if (window.lenis) {
+      // Solo detener Lenis si existe (desktop)
+      if (window.lenis && !isMobileOrTablet) {
         window.lenis.stop();
       }
     } else {
-      if (window.lenis && !isNavOutClick) {
+      // Solo reiniciar Lenis si existe y no es nav="out"
+      if (window.lenis && !isMobileOrTablet && !isNavOutClick) {
         window.lenis.start();
       }
       isNavOutClick = false;
@@ -55,12 +60,14 @@ Webflow.push(function() {
       isNavOutClick = true;
       toggleBtn.click();
       
-      // Reactiva lenis después de 2 segundos
-      setTimeout(() => {
-        if (window.lenis) {
-          window.lenis.start();
-        }
-      }, 3000);
+      // Reactiva lenis después de 3 segundos solo si existe (desktop)
+      if (!isMobileOrTablet) {
+        setTimeout(() => {
+          if (window.lenis) {
+            window.lenis.start();
+          }
+        }, 3000);
+      }
     });
   });
   
