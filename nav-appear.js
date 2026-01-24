@@ -19,7 +19,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // Tweens (uno para nav, otro para letras)
   const navMove = gsap.to(navEl, {
-    yPercent: -100,
+    yPercent: -120,
     duration: 0.6,
     ease: "expo.inOut",
     paused: true,
