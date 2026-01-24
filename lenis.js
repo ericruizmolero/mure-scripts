@@ -1,10 +1,12 @@
-
 document.addEventListener("DOMContentLoaded", () => {
   const lenis = new Lenis({
     duration: 1.2,
     smooth: true,
     easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
   });
+
+  // Exponer lenis globalmente
+  window.lenis = lenis;
 
   const raf = (time) => {
     lenis.raf(time);
