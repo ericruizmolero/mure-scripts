@@ -25,18 +25,22 @@
       if (!spanRect.width || !containerRect.width) return;
       // Usa visualViewport si existe (mejor en móviles/zoom)
       const vw = window.visualViewport ? window.visualViewport.width : window.innerWidth;
+      
+      // Debug: descomentar para ver el ancho detectado
+      // console.log('Viewport width:', vw);
+      
       blink.style.position = 'absolute';
       blink.style.left = (spanRect.right - containerRect.left + 5) + 'px';
       blink.style.top = 'auto';
       blink.style.transform = 'none';
-      // Control del bottom según ancho
-      if (vw < 478) {
-        // Mobile
+      // Control del bottom según ancho (ajustado a breakpoints Webflow)
+      if (vw < 768) {
+        // Mobile & Tablet portrait
         blink.style.bottom = '0.4rem';
-      } else if (vw >= 478 && vw < 991) {
-        // Tablet
+      } else if (vw >= 768 && vw < 992) {
+        // Tablet landscape
         blink.style.bottom = '1.1rem';
-      } else if (vw >= 991 && vw <= 1550) {
+      } else if (vw >= 992 && vw <= 1550) {
         // Desktop pequeño
         blink.style.bottom = '1.1rem';
       } else {
