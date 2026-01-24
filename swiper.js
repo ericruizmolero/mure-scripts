@@ -17,7 +17,7 @@ document.addEventListener('DOMContentLoaded', function () {
         slidesPerView: 2,
       },
       1250: {
-        slidesPerView: 'auto', // o el número que necesites
+        slidesPerView: '1', // o el número que necesites
       }
     }
   });
