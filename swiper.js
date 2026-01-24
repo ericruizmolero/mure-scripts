@@ -5,10 +5,20 @@ document.addEventListener('DOMContentLoaded', function () {
     spaceBetween: 0,
     grabCursor: true,
     allowTouchMove: true,
-
     navigation: {
       nextEl: ".work-next",
       prevEl: ".work-prev",
     },
+    breakpoints: {
+      320: {
+        slidesPerView: 1,
+      },
+      768: {
+        slidesPerView: 2,
+      },
+      1250: {
+        slidesPerView: 'auto', // o el número que necesites
+      }
+    }
   });
 });
