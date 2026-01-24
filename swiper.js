@@ -1,7 +1,7 @@
 document.addEventListener('DOMContentLoaded', function () {
   const solutionSwiper = new Swiper('.swiper.is-work', {
     slidesPerView: 'auto',
-    speed: 1000,         
+    speed: 1000,
     spaceBetween: 0,
     grabCursor: true,
     allowTouchMove: true,
@@ -9,4 +9,5 @@ document.addEventListener('DOMContentLoaded', function () {
       nextEl: ".work-next",
       prevEl: ".work-prev",
     }
+  });
 });
