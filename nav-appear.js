@@ -3,13 +3,8 @@ document.addEventListener("DOMContentLoaded", () => {
   if (window.__NAV_TOGGLE_INIT__) return;
   window.__NAV_TOGGLE_INIT__ = true;
   
-  // Detectar si es desktop
-  const isDesktop = window.innerWidth >= 992;
-  
-  // Solo ejecutar en desktop
-  if (!isDesktop) return;
-  
   gsap.registerPlugin(ScrollTrigger);
+  
   const NAV_BG_COLOR = "#f7f7f5";
   let manualOverride = false;
   const navEl = document.querySelector(".nav");
@@ -19,6 +14,9 @@ document.addEventListener("DOMContentLoaded", () => {
   const navButton = document.querySelector(".nav_right .button_secondary");
   
   if (!navEl || !navIcon) return;
+  
+  // Detectar si es desktop
+  const isDesktop = window.innerWidth >= 992;
   
   // Estado real (fuente de verdad)
   let navHidden = false; // asumimos visible al cargar
@@ -52,7 +50,7 @@ document.addEventListener("DOMContentLoaded", () => {
     paused: true
   });
   
-  // ScrollTrigger del nav (autohide)
+  // ScrollTrigger del nav (autohide) - FUNCIONA EN MOBILE Y DESKTOP
   const navST = ScrollTrigger.create({
     start: 0,
     end: "max",
@@ -71,55 +69,58 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   });
   
-  function openNav() {
-    // ✅ limpia conflictos
-    gsap.killTweensOf(navEl);
-    gsap.killTweensOf(letterPaths);
-    lettersTween.pause().reverse();
-    navMove.pause().reverse();
-    gsap.to(navEl, {
-      backgroundColor: NAV_BG_COLOR,
-      duration: 0.25,
-      ease: "power2.out",
-      overwrite: "auto"
-    });
-  }
-  
-  function closeNav() {
-    gsap.killTweensOf(navEl);
-    gsap.killTweensOf(letterPaths);
-    lettersTween.pause().play();
-    navMove.pause().play();
-  }
-  
-  function releaseManualOverride() {
-    manualOverride = false;
-    navST.enable();
-    ScrollTrigger.update();
-    window.removeEventListener("wheel", releaseManualOverride);
-    window.removeEventListener("touchstart", releaseManualOverride);
-    window.removeEventListener("touchmove", releaseManualOverride);
-    window.removeEventListener("keydown", releaseManualOverride);
-  }
-  
-  navIcon.addEventListener("click", (e) => {
-    // evita dobles clicks "fantasma" por overlays/links
-    e.preventDefault();
-    e.stopPropagation();
-    manualOverride = true;
-    navST.disable();
-    // ✅ Toggle 100% determinista por estado real
-    if (navHidden) {
-      openNav();
-      navHidden = false;
-    } else {
-      closeNav();
-      navHidden = true;
+  // ⚠️ Toggle manual SOLO en desktop
+  if (isDesktop) {
+    function openNav() {
+      // ✅ limpia conflictos
+      gsap.killTweensOf(navEl);
+      gsap.killTweensOf(letterPaths);
+      lettersTween.pause().reverse();
+      navMove.pause().reverse();
+      gsap.to(navEl, {
+        backgroundColor: NAV_BG_COLOR,
+        duration: 0.25,
+        ease: "power2.out",
+        overwrite: "auto"
+      });
     }
-    // liberar override con intención real de scroll/gesto/tecla
-    window.addEventListener("wheel", releaseManualOverride, { once: true, passive: true });
-    window.addEventListener("touchstart", releaseManualOverride, { once: true, passive: true });
-    window.addEventListener("touchmove", releaseManualOverride, { once: true, passive: true });
-    window.addEventListener("keydown", releaseManualOverride, { once: true });
-  }, { passive: false });
+    
+    function closeNav() {
+      gsap.killTweensOf(navEl);
+      gsap.killTweensOf(letterPaths);
+      lettersTween.pause().play();
+      navMove.pause().play();
+    }
+    
+    function releaseManualOverride() {
+      manualOverride = false;
+      navST.enable();
+      ScrollTrigger.update();
+      window.removeEventListener("wheel", releaseManualOverride);
+      window.removeEventListener("touchstart", releaseManualOverride);
+      window.removeEventListener("touchmove", releaseManualOverride);
+      window.removeEventListener("keydown", releaseManualOverride);
+    }
+    
+    navIcon.addEventListener("click", (e) => {
+      // evita dobles clicks "fantasma" por overlays/links
+      e.preventDefault();
+      e.stopPropagation();
+      manualOverride = true;
+      navST.disable();
+      // ✅ Toggle 100% determinista por estado real
+      if (navHidden) {
+        openNav();
+        navHidden = false;
+      } else {
+        closeNav();
+        navHidden = true;
+      }
+      // liberar override con intención real de scroll/gesto/tecla
+      window.addEventListener("wheel", releaseManualOverride, { once: true, passive: true });
+      window.addEventListener("touchstart", releaseManualOverride, { once: true, passive: true });
+      window.addEventListener("touchmove", releaseManualOverride, { once: true, passive: true });
+      window.addEventListener("keydown", releaseManualOverride, { once: true });
+    }, { passive: false });
+  }
 });
