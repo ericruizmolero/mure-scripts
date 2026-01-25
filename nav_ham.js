@@ -66,7 +66,7 @@ Webflow.push(function() {
           if (window.lenis) {
             window.lenis.start();
           }
-        }, 3000);
+        }, 4000);
       }
     });
   });
