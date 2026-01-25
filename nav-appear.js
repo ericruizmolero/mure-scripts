@@ -1,27 +1,21 @@
 document.addEventListener("DOMContentLoaded", () => {
-  // ✅ Evita dobles inicializaciones (muy común en Webflow)
+  // ✅ Evita dobles inicializaciones
   if (window.__NAV_TOGGLE_INIT__) return;
   window.__NAV_TOGGLE_INIT__ = true;
   
   gsap.registerPlugin(ScrollTrigger);
   
   const NAV_BG_COLOR = "#f7f7f5";
-  let manualOverride = false;
   const navEl = document.querySelector(".nav");
   const navIcon = document.querySelector(".nav_icon");
   const letterPaths = document.querySelectorAll(".nav_letters path");
-  const navHam = document.querySelector(".nav_ham");
-  const navButton = document.querySelector(".nav_right .button_secondary");
   
-  if (!navEl || !navIcon) return;
+  if (!navEl) return;
   
-  // Detectar si es desktop
-  const isDesktop = window.innerWidth >= 992;
+  let manualOverride = false;
+  let navHidden = false;
   
-  // Estado real (fuente de verdad)
-  let navHidden = false; // asumimos visible al cargar
-  
-  // Tweens (uno para nav, otro para letras)
+  // Tweens
   const navMove = gsap.to(navEl, {
     yPercent: -120,
     duration: 0.6,
@@ -29,15 +23,23 @@ document.addEventListener("DOMContentLoaded", () => {
     paused: true,
     onComplete: () => {
       navHidden = true;
-      gsap.set(navEl, { backgroundColor: "transparent" });
-      // ✅ Fuerza repaint en iOS para nav y elementos problemáticos
-      navEl.style.transform = navEl.style.transform;
-      if (navHam) navHam.style.transform = navHam.style.transform;
-      if (navButton) navButton.style.transform = navButton.style.transform;
+      gsap.set(navEl, { 
+        backgroundColor: "transparent",
+        visibility: "hidden" // ✅ Fix iOS: oculta completamente
+      });
     },
     onReverseComplete: () => {
       navHidden = false;
-      gsap.set(navEl, { backgroundColor: NAV_BG_COLOR });
+      gsap.set(navEl, { 
+        backgroundColor: NAV_BG_COLOR,
+        visibility: "visible" // ✅ Fix iOS: muestra completamente
+      });
+    },
+    onStart: () => {
+      if (navMove.reversed()) {
+        // Si está volviendo (reverse), mostrar inmediatamente
+        gsap.set(navEl, { visibility: "visible" });
+      }
     }
   });
   
@@ -50,18 +52,17 @@ document.addEventListener("DOMContentLoaded", () => {
     paused: true
   });
   
-  // ScrollTrigger del nav (autohide) - FUNCIONA EN MOBILE Y DESKTOP
-  const navST = ScrollTrigger.create({
+  // ScrollTrigger - TODOS LOS DISPOSITIVOS
+  ScrollTrigger.create({
     start: 0,
     end: "max",
     onUpdate: (self) => {
       if (manualOverride) return;
+      
       if (self.direction === 1) {
-        // scroll down → hide
         lettersTween.play();
         navMove.play();
       } else {
-        // scroll up → show
         lettersTween.reverse();
         navMove.reverse();
         gsap.set(navEl, { backgroundColor: NAV_BG_COLOR });
@@ -69,58 +70,39 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   });
   
-  // ⚠️ Toggle manual SOLO en desktop
-  if (isDesktop) {
-    function openNav() {
-      // ✅ limpia conflictos
-      gsap.killTweensOf(navEl);
-      gsap.killTweensOf(letterPaths);
-      lettersTween.pause().reverse();
-      navMove.pause().reverse();
-      gsap.to(navEl, {
-        backgroundColor: NAV_BG_COLOR,
-        duration: 0.25,
-        ease: "power2.out",
-        overwrite: "auto"
-      });
-    }
-    
-    function closeNav() {
-      gsap.killTweensOf(navEl);
-      gsap.killTweensOf(letterPaths);
-      lettersTween.pause().play();
-      navMove.pause().play();
-    }
-    
+  // Toggle manual - TODOS LOS DISPOSITIVOS
+  if (navIcon) {
     function releaseManualOverride() {
       manualOverride = false;
-      navST.enable();
-      ScrollTrigger.update();
-      window.removeEventListener("wheel", releaseManualOverride);
-      window.removeEventListener("touchstart", releaseManualOverride);
-      window.removeEventListener("touchmove", releaseManualOverride);
-      window.removeEventListener("keydown", releaseManualOverride);
+      ScrollTrigger.refresh();
     }
     
     navIcon.addEventListener("click", (e) => {
-      // evita dobles clicks "fantasma" por overlays/links
       e.preventDefault();
       e.stopPropagation();
+      
       manualOverride = true;
-      navST.disable();
-      // ✅ Toggle 100% determinista por estado real
+      
+      gsap.killTweensOf([navEl, letterPaths]);
+      
       if (navHidden) {
-        openNav();
+        // Mostrar nav
+        gsap.set(navEl, { visibility: "visible" }); // ✅ Mostrar antes de animar
+        lettersTween.reverse();
+        navMove.reverse();
+        gsap.set(navEl, { backgroundColor: NAV_BG_COLOR });
         navHidden = false;
       } else {
-        closeNav();
+        // Ocultar nav
+        lettersTween.play();
+        navMove.play();
         navHidden = true;
       }
-      // liberar override con intención real de scroll/gesto/tecla
+      
+      // Liberar override
+      setTimeout(releaseManualOverride, 100);
       window.addEventListener("wheel", releaseManualOverride, { once: true, passive: true });
       window.addEventListener("touchstart", releaseManualOverride, { once: true, passive: true });
-      window.addEventListener("touchmove", releaseManualOverride, { once: true, passive: true });
-      window.addEventListener("keydown", releaseManualOverride, { once: true });
-    }, { passive: false });
+    });
   }
 });
