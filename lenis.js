@@ -31,7 +31,7 @@ document.addEventListener("DOMContentLoaded", () => {
   
   // Seleccionar secciones según el dispositivo
   const sections = isMobileOrTablet 
-    ? document.querySelectorAll('[lenis="tablet-scroll"]')
+    ? document.querySelectorAll('[lenis-tablet="scroll"]')
     : document.querySelectorAll('[lenis="scroll"]');
   
   let animating = false;
