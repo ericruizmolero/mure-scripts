@@ -11,10 +11,11 @@ document.addEventListener('DOMContentLoaded', function () {
     breakpoints: {
       0: {
         slidesPerView: 1, // Mobile
+        spaceBetween: 80,
       },
       768: {
         slidesPerView: 1, // Tablet
-        spaceBetween: 0
+        spaceBetween: 80,
       },
       992: {
         slidesPerView: 'auto', // Desktop
