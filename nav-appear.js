@@ -20,6 +20,8 @@ document.addEventListener("DOMContentLoaded", () => {
     onComplete: () => {
       navHidden = true;
       gsap.set(navEl, { backgroundColor: "transparent" });
+      // ✅ AÑADIDO: Fuerza repaint en iOS
+      navEl.style.transform = navEl.style.transform;
     },
     onReverseComplete: () => {
       navHidden = false;
@@ -55,7 +57,7 @@ document.addEventListener("DOMContentLoaded", () => {
   function openNav() {
     // ✅ limpia conflictos
     gsap.killTweensOf(navEl);
-    gsap.killTweensOf(letterPaths); // AÑADIDO
+    gsap.killTweensOf(letterPaths);
     lettersTween.pause().reverse();
     navMove.pause().reverse();
     gsap.to(navEl, {
@@ -67,7 +69,7 @@ document.addEventListener("DOMContentLoaded", () => {
   }
   function closeNav() {
     gsap.killTweensOf(navEl);
-    gsap.killTweensOf(letterPaths); // AÑADIDO
+    gsap.killTweensOf(letterPaths);
     lettersTween.pause().play();
     navMove.pause().play();
   }
@@ -89,10 +91,10 @@ document.addEventListener("DOMContentLoaded", () => {
     // ✅ Toggle 100% determinista por estado real
     if (navHidden) {
       openNav();
-      navHidden = false; // AÑADIDO: actualiza estado inmediatamente
+      navHidden = false;
     } else {
       closeNav();
-      navHidden = true; // AÑADIDO: actualiza estado inmediatamente
+      navHidden = true;
     }
     // liberar override con intención real de scroll/gesto/tecla
     window.addEventListener("wheel", releaseManualOverride, { once: true, passive: true });
