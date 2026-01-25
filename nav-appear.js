@@ -2,14 +2,21 @@ document.addEventListener("DOMContentLoaded", () => {
   // ✅ Evita dobles inicializaciones (muy común en Webflow)
   if (window.__NAV_TOGGLE_INIT__) return;
   window.__NAV_TOGGLE_INIT__ = true;
+  
+  // Detectar si es desktop
+  const isDesktop = window.innerWidth >= 992;
+  
+  // Solo ejecutar en desktop
+  if (!isDesktop) return;
+  
   gsap.registerPlugin(ScrollTrigger);
   const NAV_BG_COLOR = "#f7f7f5";
   let manualOverride = false;
   const navEl = document.querySelector(".nav");
   const navIcon = document.querySelector(".nav_icon");
   const letterPaths = document.querySelectorAll(".nav_letters path");
-  const navHam = document.querySelector(".nav_ham"); // AÑADIDO
-  const navButton = document.querySelector(".nav_right .button_secondary"); // AÑADIDO
+  const navHam = document.querySelector(".nav_ham");
+  const navButton = document.querySelector(".nav_right .button_secondary");
   
   if (!navEl || !navIcon) return;
   
@@ -35,6 +42,7 @@ document.addEventListener("DOMContentLoaded", () => {
       gsap.set(navEl, { backgroundColor: NAV_BG_COLOR });
     }
   });
+  
   const lettersTween = gsap.to(letterPaths, {
     x: -20,
     opacity: 0,
@@ -43,6 +51,7 @@ document.addEventListener("DOMContentLoaded", () => {
     ease: "power3.out",
     paused: true
   });
+  
   // ScrollTrigger del nav (autohide)
   const navST = ScrollTrigger.create({
     start: 0,
@@ -61,6 +70,7 @@ document.addEventListener("DOMContentLoaded", () => {
       }
     }
   });
+  
   function openNav() {
     // ✅ limpia conflictos
     gsap.killTweensOf(navEl);
@@ -74,12 +84,14 @@ document.addEventListener("DOMContentLoaded", () => {
       overwrite: "auto"
     });
   }
+  
   function closeNav() {
     gsap.killTweensOf(navEl);
     gsap.killTweensOf(letterPaths);
     lettersTween.pause().play();
     navMove.pause().play();
   }
+  
   function releaseManualOverride() {
     manualOverride = false;
     navST.enable();
@@ -89,6 +101,7 @@ document.addEventListener("DOMContentLoaded", () => {
     window.removeEventListener("touchmove", releaseManualOverride);
     window.removeEventListener("keydown", releaseManualOverride);
   }
+  
   navIcon.addEventListener("click", (e) => {
     // evita dobles clicks "fantasma" por overlays/links
     e.preventDefault();
