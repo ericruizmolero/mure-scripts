@@ -8,9 +8,14 @@ document.addEventListener("DOMContentLoaded", () => {
   const navEl = document.querySelector(".nav");
   const navIcon = document.querySelector(".nav_icon");
   const letterPaths = document.querySelectorAll(".nav_letters path");
+  const navHam = document.querySelector(".nav_ham"); // AÑADIDO
+  const navButton = document.querySelector(".nav_right .button_secondary"); // AÑADIDO
+  
   if (!navEl || !navIcon) return;
+  
   // Estado real (fuente de verdad)
   let navHidden = false; // asumimos visible al cargar
+  
   // Tweens (uno para nav, otro para letras)
   const navMove = gsap.to(navEl, {
     yPercent: -120,
@@ -20,8 +25,10 @@ document.addEventListener("DOMContentLoaded", () => {
     onComplete: () => {
       navHidden = true;
       gsap.set(navEl, { backgroundColor: "transparent" });
-      // ✅ AÑADIDO: Fuerza repaint en iOS
+      // ✅ Fuerza repaint en iOS para nav y elementos problemáticos
       navEl.style.transform = navEl.style.transform;
+      if (navHam) navHam.style.transform = navHam.style.transform;
+      if (navButton) navButton.style.transform = navButton.style.transform;
     },
     onReverseComplete: () => {
       navHidden = false;
