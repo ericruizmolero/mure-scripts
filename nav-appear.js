@@ -15,17 +15,6 @@ document.addEventListener("DOMContentLoaded", () => {
   let manualOverride = false;
   let navHidden = false;
   
-  // ✅ Tween para el background - más rápido
-  const navBgTween = gsap.fromTo(navEl, 
-    { backgroundColor: "transparent" },
-    { 
-      backgroundColor: NAV_BG_COLOR,
-      duration: 0.1,
-      ease: "power2.out",
-      paused: true
-    }
-  );
-  
   // Tweens
   const navMove = gsap.to(navEl, {
     yPercent: -120,
@@ -41,13 +30,14 @@ document.addEventListener("DOMContentLoaded", () => {
     },
     onReverseComplete: () => {
       navHidden = false;
-      gsap.set(navEl, { visibility: "visible" });
+      gsap.set(navEl, { 
+        backgroundColor: NAV_BG_COLOR,
+        visibility: "visible"
+      });
     },
     onStart: () => {
       if (navMove.reversed()) {
         gsap.set(navEl, { visibility: "visible" });
-        // ✅ Background con ease rápido
-        navBgTween.restart();
       }
     }
   });
@@ -72,10 +62,10 @@ document.addEventListener("DOMContentLoaded", () => {
         lettersTween.play();
         navMove.play();
       } else {
-        // ✅ Background con ease rápido
-        navBgTween.restart();
-        lettersTween.reverse();
-        navMove.reverse();
+        // ✅ Aparición más rápida al hacer scroll up
+        lettersTween.reverse().duration(0.3);
+        navMove.reverse().duration(0.35);
+        gsap.set(navEl, { backgroundColor: NAV_BG_COLOR });
       }
     }
   });
@@ -96,16 +86,16 @@ document.addEventListener("DOMContentLoaded", () => {
       gsap.killTweensOf([navEl, letterPaths]);
       
       if (navHidden) {
-        // ✅ Mostrar nav con background animado
+        // ✅ Mostrar nav más rápido
         gsap.set(navEl, { visibility: "visible" });
-        navBgTween.restart();
-        lettersTween.reverse();
-        navMove.reverse();
+        lettersTween.reverse().duration(0.3);
+        navMove.reverse().duration(0.35);
+        gsap.set(navEl, { backgroundColor: NAV_BG_COLOR });
         navHidden = false;
       } else {
-        // Ocultar nav
-        lettersTween.play();
-        navMove.play();
+        // Ocultar nav (velocidad normal)
+        lettersTween.play().duration(0.5);
+        navMove.play().duration(0.6);
         navHidden = true;
       }
       
