@@ -54,24 +54,22 @@ document.addEventListener("DOMContentLoaded", () => {
   
   sections.forEach((section) => observer.observe(section));
   
-  // Excluir anchors con nav="out" de este handler (solo desktop)
-  if (!isMobileOrTablet) {
-    document.querySelectorAll('a[href^="#"]:not([nav="out"])').forEach((anchor) => {
-      anchor.addEventListener("click", (e) => {
-        e.preventDefault();
-        const targetId = anchor.getAttribute("href").substring(1);
-        const targetSection = document.getElementById(targetId);
-        if (targetSection) {
-          anchorClickActive = true;
-          lenis.stop();
-          
-          targetSection.scrollIntoView({ behavior: "smooth" });
-          setTimeout(() => {
-            lenis.start();
-            anchorClickActive = false;
-          }, 4000);
-        }
-      });
+  // Manejar anchors (tanto desktop como mobile/tablet)
+  document.querySelectorAll('a[href^="#"]:not([nav="out"])').forEach((anchor) => {
+    anchor.addEventListener("click", (e) => {
+      e.preventDefault();
+      const targetId = anchor.getAttribute("href").substring(1);
+      const targetSection = document.getElementById(targetId);
+      if (targetSection) {
+        anchorClickActive = true;
+        lenis.stop();
+        
+        targetSection.scrollIntoView({ behavior: "smooth" });
+        setTimeout(() => {
+          lenis.start();
+          anchorClickActive = false;
+        }, 4000);
+      }
     });
-  }
+  });
 });
