@@ -15,25 +15,6 @@ document.addEventListener("DOMContentLoaded", () => {
   let manualOverride = false;
   let navHidden = false;
   
-  // ✅ Función para mostrar el nav con el ritmo perfecto
-  function showNav() {
-    gsap.set(navEl, { visibility: "visible" });
-    
-    // Background rápido
-    gsap.fromTo(navEl,
-      { backgroundColor: "transparent" },
-      { 
-        backgroundColor: NAV_BG_COLOR,
-        duration: 0.1,
-        ease: "power2.out"
-      }
-    );
-    
-    // Letras y movimiento
-    lettersTween.reverse();
-    navMove.reverse();
-  }
-  
   // Tweens
   const navMove = gsap.to(navEl, {
     yPercent: -120,
@@ -49,7 +30,19 @@ document.addEventListener("DOMContentLoaded", () => {
     },
     onReverseComplete: () => {
       navHidden = false;
-      gsap.set(navEl, { visibility: "visible" });
+      gsap.set(navEl, { 
+        backgroundColor: NAV_BG_COLOR,
+        visibility: "visible"
+      });
+    },
+    onStart: () => {
+      if (navMove.reversed()) {
+        // ✅ Mostrar background inmediatamente al aparecer
+        gsap.set(navEl, { 
+          visibility: "visible",
+          backgroundColor: NAV_BG_COLOR
+        });
+      }
     }
   });
   
@@ -73,8 +66,10 @@ document.addEventListener("DOMContentLoaded", () => {
         lettersTween.play();
         navMove.play();
       } else {
-        // ✅ Mismo ritmo que el toggle
-        showNav();
+        // ✅ Background aparece inmediatamente
+        gsap.set(navEl, { backgroundColor: NAV_BG_COLOR });
+        lettersTween.reverse();
+        navMove.reverse();
       }
     }
   });
@@ -95,8 +90,13 @@ document.addEventListener("DOMContentLoaded", () => {
       gsap.killTweensOf([navEl, letterPaths]);
       
       if (navHidden) {
-        // ✅ Usar la misma función
-        showNav();
+        // ✅ Mostrar nav con background inmediato
+        gsap.set(navEl, { 
+          visibility: "visible",
+          backgroundColor: NAV_BG_COLOR
+        });
+        lettersTween.reverse();
+        navMove.reverse();
         navHidden = false;
       } else {
         // Ocultar nav
