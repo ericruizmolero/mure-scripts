@@ -25,19 +25,18 @@ document.addEventListener("DOMContentLoaded", () => {
       navHidden = true;
       gsap.set(navEl, { 
         backgroundColor: "transparent",
-        visibility: "hidden" // ✅ Fix iOS: oculta completamente
+        visibility: "hidden"
       });
     },
     onReverseComplete: () => {
       navHidden = false;
       gsap.set(navEl, { 
         backgroundColor: NAV_BG_COLOR,
-        visibility: "visible" // ✅ Fix iOS: muestra completamente
+        visibility: "visible"
       });
     },
     onStart: () => {
       if (navMove.reversed()) {
-        // Si está volviendo (reverse), mostrar inmediatamente
         gsap.set(navEl, { visibility: "visible" });
       }
     }
@@ -63,8 +62,9 @@ document.addEventListener("DOMContentLoaded", () => {
         lettersTween.play();
         navMove.play();
       } else {
-        lettersTween.reverse();
-        navMove.reverse();
+        // ✅ Aparición más rápida al hacer scroll up
+        lettersTween.reverse().duration(0.3);
+        navMove.reverse().duration(0.35);
         gsap.set(navEl, { backgroundColor: NAV_BG_COLOR });
       }
     }
@@ -86,16 +86,16 @@ document.addEventListener("DOMContentLoaded", () => {
       gsap.killTweensOf([navEl, letterPaths]);
       
       if (navHidden) {
-        // Mostrar nav
-        gsap.set(navEl, { visibility: "visible" }); // ✅ Mostrar antes de animar
-        lettersTween.reverse();
-        navMove.reverse();
+        // ✅ Mostrar nav más rápido
+        gsap.set(navEl, { visibility: "visible" });
+        lettersTween.reverse().duration(0.3);
+        navMove.reverse().duration(0.35);
         gsap.set(navEl, { backgroundColor: NAV_BG_COLOR });
         navHidden = false;
       } else {
-        // Ocultar nav
-        lettersTween.play();
-        navMove.play();
+        // Ocultar nav (velocidad normal)
+        lettersTween.play().duration(0.5);
+        navMove.play().duration(0.6);
         navHidden = true;
       }
       
