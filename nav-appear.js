@@ -15,25 +15,6 @@ document.addEventListener("DOMContentLoaded", () => {
   let manualOverride = false;
   let navHidden = false;
   
-  // ✅ Función para mostrar el nav con el ritmo perfecto
-  function showNav() {
-    gsap.set(navEl, { visibility: "visible" });
-    
-    // Background rápido
-    gsap.fromTo(navEl,
-      { backgroundColor: "transparent" },
-      { 
-        backgroundColor: NAV_BG_COLOR,
-        duration: 0.1,
-        ease: "power2.out"
-      }
-    );
-    
-    // Letras y movimiento
-    lettersTween.reverse();
-    navMove.reverse();
-  }
-  
   // Tweens
   const navMove = gsap.to(navEl, {
     yPercent: -120,
@@ -61,6 +42,34 @@ document.addEventListener("DOMContentLoaded", () => {
     ease: "power3.out",
     paused: true
   });
+  
+  // ✅ Función para mostrar el nav con el ritmo perfecto
+  function showNav() {
+    gsap.set(navEl, { visibility: "visible" });
+    
+    // Background rápido
+    gsap.fromTo(navEl,
+      { backgroundColor: "transparent" },
+      { 
+        backgroundColor: NAV_BG_COLOR,
+        duration: 0.1,
+        ease: "power2.out"
+      }
+    );
+    
+    // ✅ Asegurar que el tween está en el estado correcto antes de hacer reverse
+    if (navMove.progress() === 1) {
+      // Si está completamente oculto, hacer el reverse normalmente
+      lettersTween.reverse();
+      navMove.reverse();
+    } else {
+      // Si está en medio, resetear y animar desde arriba
+      navMove.progress(1);
+      lettersTween.progress(1);
+      lettersTween.reverse();
+      navMove.reverse();
+    }
+  }
   
   // ScrollTrigger - TODOS LOS DISPOSITIVOS
   ScrollTrigger.create({
