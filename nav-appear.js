@@ -30,19 +30,7 @@ document.addEventListener("DOMContentLoaded", () => {
     },
     onReverseComplete: () => {
       navHidden = false;
-      gsap.set(navEl, { 
-        backgroundColor: NAV_BG_COLOR,
-        visibility: "visible"
-      });
-    },
-    onStart: () => {
-      if (navMove.reversed()) {
-        // ✅ Mostrar background inmediatamente al aparecer
-        gsap.set(navEl, { 
-          visibility: "visible",
-          backgroundColor: NAV_BG_COLOR
-        });
-      }
+      gsap.set(navEl, { visibility: "visible" });
     }
   });
   
@@ -55,6 +43,34 @@ document.addEventListener("DOMContentLoaded", () => {
     paused: true
   });
   
+  // ✅ Función para mostrar el nav con el ritmo perfecto
+  function showNav() {
+    gsap.set(navEl, { visibility: "visible" });
+    
+    // Background rápido
+    gsap.fromTo(navEl,
+      { backgroundColor: "transparent" },
+      { 
+        backgroundColor: NAV_BG_COLOR,
+        duration: 0.1,
+        ease: "power2.out"
+      }
+    );
+    
+    // ✅ Asegurar que el tween está en el estado correcto antes de hacer reverse
+    if (navMove.progress() === 1) {
+      // Si está completamente oculto, hacer el reverse normalmente
+      lettersTween.reverse();
+      navMove.reverse();
+    } else {
+      // Si está en medio, resetear y animar desde arriba
+      navMove.progress(1);
+      lettersTween.progress(1);
+      lettersTween.reverse();
+      navMove.reverse();
+    }
+  }
+  
   // ScrollTrigger - TODOS LOS DISPOSITIVOS
   ScrollTrigger.create({
     start: 0,
@@ -66,10 +82,8 @@ document.addEventListener("DOMContentLoaded", () => {
         lettersTween.play();
         navMove.play();
       } else {
-        // ✅ Background aparece inmediatamente
-        gsap.set(navEl, { backgroundColor: NAV_BG_COLOR });
-        lettersTween.reverse();
-        navMove.reverse();
+        // ✅ Mismo ritmo que el toggle
+        showNav();
       }
     }
   });
@@ -90,13 +104,8 @@ document.addEventListener("DOMContentLoaded", () => {
       gsap.killTweensOf([navEl, letterPaths]);
       
       if (navHidden) {
-        // ✅ Mostrar nav con background inmediato
-        gsap.set(navEl, { 
-          visibility: "visible",
-          backgroundColor: NAV_BG_COLOR
-        });
-        lettersTween.reverse();
-        navMove.reverse();
+        // ✅ Usar la misma función
+        showNav();
         navHidden = false;
       } else {
         // Ocultar nav
