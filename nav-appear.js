@@ -63,8 +63,8 @@ document.addEventListener("DOMContentLoaded", () => {
         navMove.play();
       } else {
         // ✅ Aparición más rápida al hacer scroll up
-        lettersTween.reverse().duration(0.3);
-        navMove.reverse().duration(0.35);
+        lettersTween.reverse().duration(0.2);
+        navMove.reverse().duration(0.2);
         gsap.set(navEl, { backgroundColor: NAV_BG_COLOR });
       }
     }
