@@ -94,8 +94,8 @@ document.addEventListener("DOMContentLoaded", () => {
         navHidden = false;
       } else {
         // Ocultar nav (velocidad normal)
-        lettersTween.play().duration(0.5);
-        navMove.play().duration(0.6);
+        lettersTween.play().duration(0.2);
+        navMove.play().duration(0.3);
         navHidden = true;
       }
       
