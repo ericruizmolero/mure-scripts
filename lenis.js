@@ -68,7 +68,7 @@ document.addEventListener("DOMContentLoaded", () => {
         setTimeout(() => {
           lenis.start();
           anchorClickActive = false;
-        }, 4000);
+        }, 2500);
       }
     });
   });
