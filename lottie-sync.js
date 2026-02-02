@@ -1,10 +1,10 @@
 
 (function() {
     const strings = [
-        'Score payment streams with ML models, enforce policies on anomalies.',
-        'Embed documents, retrieve context, generate LLM responses.',
-        'Orchestrate ML workflows from feature engineering to model deployment.',
-        'Transform data with SQL, catalog assets, monitor pipeline health.'
+        'Transform data with SQL to tables, catalog assets, monitor',
+        'Score payment streams with ML models, enforce policies',
+        'Embed docs in vectors, RAG agents retrieve, LLM responds',
+        'Run notebook ML jobs, eval models, deploy via MLOps'
     ];
 
     const element = document.getElementById('text-build');
