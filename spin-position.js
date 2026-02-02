@@ -36,7 +36,7 @@
       // Control del bottom según ancho (ajustado a breakpoints Webflow)
       if (vw < 768) {
         // Mobile & Tablet portrait
-        blink.style.bottom = '0.7rem';
+        blink.style.bottom = '0.5rem';
       } else if (vw >= 768 && vw < 992) {
         // Tablet landscape
         blink.style.bottom = '1.1rem';
