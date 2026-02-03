@@ -1,4 +1,3 @@
-
 (function() {
     const strings = [
         'Embed docs in vectors, RAG agents retrieve, LLM responds',
@@ -6,79 +5,110 @@
         'Transform data with SQL to tables, catalog assets, monitor',
         'Score payment streams with ML models, enforce policies'
     ];
-
+    
     const element = document.getElementById('text-build');
-    if (!element) {
-        console.error('Element #text-build not found');
+    const target = document.querySelector('[data-w-id="cf7ed0ae-648a-dda1-5e66-b665f8b20a67"]');
+    
+    if (!element || !target) {
+        console.error('Elementos no encontrados');
         return;
     }
     
     let currentIndex = 0;
-
+    let isRunning = false;
+    let timeoutIds = [];
+    let animationId = null;
+    
+    function clearAll() {
+        timeoutIds.forEach(id => clearTimeout(id));
+        timeoutIds = [];
+        if (animationId) cancelAnimationFrame(animationId);
+    }
+    
+    function safeTimeout(cb, delay) {
+        const id = setTimeout(cb, delay);
+        timeoutIds.push(id);
+        return id;
+    }
+    
     function typeString(text, duration, callback) {
+        if (!isRunning) return;
         element.textContent = '';
         const chars = text.split('');
-        const totalChars = chars.length;
         const startTime = performance.now();
         
-        function animate(currentTime) {
-            const elapsed = currentTime - startTime;
-            const progress = Math.min(elapsed / duration, 1);
-            const charsToShow = Math.floor(progress * totalChars);
-            
-            element.textContent = chars.slice(0, charsToShow).join('');
-            
+        function animate(now) {
+            if (!isRunning) return;
+            const progress = Math.min((now - startTime) / duration, 1);
+            element.textContent = chars.slice(0, Math.floor(progress * chars.length)).join('');
             if (progress < 1) {
-                requestAnimationFrame(animate);
+                animationId = requestAnimationFrame(animate);
             } else {
-                element.textContent = text;
                 if (callback) callback();
             }
         }
-        
-        requestAnimationFrame(animate);
+        animationId = requestAnimationFrame(animate);
     }
-
+    
     function eraseString(callback) {
-        const text = element.textContent;
-        const chars = text.split('');
-        const duration = 500;  // ✅ 500ms borrar
+        if (!isRunning) return;
+        const chars = element.textContent.split('');
         const startTime = performance.now();
         
-        function animate(currentTime) {
-            const elapsed = currentTime - startTime;
-            const progress = Math.min(elapsed / duration, 1);
-            const charsToShow = chars.length - Math.floor(progress * chars.length);
-            
-            element.textContent = chars.slice(0, charsToShow).join('');
-            
+        function animate(now) {
+            if (!isRunning) return;
+            const progress = Math.min((now - startTime) / 500, 1);
+            element.textContent = chars.slice(0, chars.length - Math.floor(progress * chars.length)).join('');
             if (progress < 1) {
-                requestAnimationFrame(animate);
+                animationId = requestAnimationFrame(animate);
             } else {
                 element.textContent = '';
                 if (callback) callback();
             }
         }
-        
-        requestAnimationFrame(animate);
+        animationId = requestAnimationFrame(animate);
     }
-
+    
     function loop() {
-        const currentString = strings[currentIndex];
+        if (!isRunning) return;
         
-        typeString(currentString, 2000, () => {      // 2s escribir
-            setTimeout(() => {                        // 0.1s pausa
-                console.log('String completado - Lottie empieza');
-                
-                setTimeout(() => {                    // 4s mantener
-                    eraseString(() => {               // 0.5s borrar
+        typeString(strings[currentIndex], 2000, () => {
+            safeTimeout(() => {
+                if (!isRunning) return;
+                safeTimeout(() => {
+                    eraseString(() => {
                         currentIndex = (currentIndex + 1) % strings.length;
-                        setTimeout(loop, 500);        // 0.5s antes de siguiente
+                        safeTimeout(loop, 500);
                     });
                 }, 6000);
             }, 100);
         });
     }
-
-    setTimeout(loop, 500);
+    
+    function start() {
+        if (isRunning) return;
+        isRunning = true;
+        currentIndex = 0;
+        element.textContent = '';
+        safeTimeout(loop, 500);
+    }
+    
+    function stop() {
+        isRunning = false;
+        clearAll();
+        element.textContent = '';
+        currentIndex = 0;
+    }
+    
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                start();
+            } else {
+                stop();
+            }
+        });
+    }, { threshold: 0.3 });
+    
+    observer.observe(target);
 })();
