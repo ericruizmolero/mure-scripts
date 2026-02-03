@@ -1,4 +1,4 @@
-(function() {
+document.addEventListener('DOMContentLoaded', function() {
     const strings = [
         'Embed docs in vectors, RAG agents retrieve, LLM responds',
         'Run notebook ML jobs, eval models, deploy via MLOps',
@@ -9,6 +9,10 @@
     const element = document.getElementById('text-build');
     const target = document.querySelector('[data-w-id="cf7ed0ae-648a-dda1-5e66-b665f8b20a67"]');
     const lottieEl = document.querySelector('.built_pc-lottie');
+    
+    console.log('element:', element);
+    console.log('target:', target);
+    console.log('lottieEl:', lottieEl);
     
     if (!element || !target) {
         console.error('Elementos no encontrados');
@@ -22,10 +26,7 @@
             const lottie = Webflow.require('lottie').lottie;
             const animations = lottie.getRegisteredAnimations();
             myAnimation = animations.find(anim => anim.wrapper === lottieEl);
-            
-            if (!myAnimation) {
-                console.warn('Lottie .built_pc-lottie no encontrado en animaciones registradas');
-            }
+            console.log('Lottie inicializado:', myAnimation);
         } catch (e) {
             console.warn('Lottie no encontrado:', e);
         }
@@ -128,13 +129,9 @@
         }
     }
     
-    if (window.Webflow) {
-        Webflow.push(function() {
-            initLottie();
-        });
-    } else {
-        window.addEventListener('load', initLottie);
-    }
+    Webflow.push(function() {
+        initLottie();
+    });
     
     const observer = new IntersectionObserver((entries) => {
         entries.forEach(entry => {
@@ -147,4 +144,4 @@
     }, { threshold: 0.3 });
     
     observer.observe(target);
-})();
+});
