@@ -39,7 +39,7 @@
         blink.style.bottom = '0.5rem';
       } else if (vw >= 768 && vw < 992) {
         // Tablet landscape
-        blink.style.bottom = '1.1rem';
+        blink.style.bottom = '0.75rem';
       } else if (vw >= 992 && vw <= 1550) {
         // Desktop pequeño
         blink.style.bottom = '1.1rem';
